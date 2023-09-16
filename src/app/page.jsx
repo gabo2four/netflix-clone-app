@@ -1,13 +1,28 @@
 'use client'
-
+import { signOut, useSession } from 'next-auth/react'
 import React from 'react'
 import FAQcards from './components/FAQcards'
-
+import { useState } from 'react'
+import Link from 'next/link'
 
 
 function page() {
 
-  
+
+  const options = [
+    {value:"english",text:"English"},
+    {value:"spanish",text:"Spanish"}
+  ]
+
+  const [selected,setSelected] = useState(options[0].value)
+
+  const handleChange = event => {
+    console.log(event.target.value)
+    setSelected(event.target.value)
+  }
+
+  const {data:session,status} = useSession()
+  console.log(session,status)
 
   return (
     <div>
@@ -24,16 +39,28 @@ function page() {
                       justify-center
                       mx-2
                       '>
-                    <select style={{borderColor:"rgb(133, 133, 133)"}}  className='font-bold bg-opacity-75 rounded outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:dark:ring-offset-black/90  border appearance-none py-1 bg-black text-white w-28 text-center flex items-center justify-center' name="" id="">
-                      <option className='bg-black text-center flex items-center justify-center' selected value="english">English</option>
-                      <option className='bg-black text-center flex items-center justify-center' value="spanish">Spanish</option>
+                    <select style={{borderColor:"rgb(133, 133, 133)"}} defaultValue={selected} onChange={handleChange}  className='font-bold bg-opacity-75 rounded outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:dark:ring-offset-black/90  border appearance-none py-1 bg-black text-white w-28 text-center flex items-center justify-center' name="" id="">
+                      {options.map(option => (
+                        <option key={option.value} className='bg-black text-center flex items-center justify-center ' value={option.value}>{option.text}</option>
+                      ))}  
+                    
                     </select>
                   </div>
                 </div>
                 <div>
-                  <div className='font-bold mx-2 bg-red-700 w-fit px-5 py-1 rounded text-white'>
-                    Sign In
-                  </div>
+                  {
+                    session ? (
+                      <button onClick={()=>{signOut()}}  className='font-bold mx-2 bg-red-700 w-fit px-5 py-1 rounded text-white'>
+                        Sign Out
+                      </button>
+                    ) : (
+                      <Link href={'/auth/signin'} className='font-bold mx-2 bg-red-700 w-fit px-5 py-1 rounded text-white'>
+                      Sign In
+                    </Link>
+
+                    )
+                  }
+                  
                 </div>
                   
               </div>
